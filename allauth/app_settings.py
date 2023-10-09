@@ -7,3 +7,5 @@ SOCIALACCOUNT_ENABLED = "allauth.socialaccount" in settings.INSTALLED_APPS
 LOGIN_REDIRECT_URL = getattr(settings, "LOGIN_REDIRECT_URL", "/")
 
 USER_MODEL = getattr(settings, "AUTH_USER_MODEL", "auth.User")
+
+SOCIALACCOUNT_VERIFY_CERT = getattr(settings, "SOCIALACCOUNT_VERIFY_CERT", None)

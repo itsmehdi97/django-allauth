@@ -2,6 +2,7 @@ import requests
 from urllib.parse import parse_qsl
 
 from django.utils.http import urlencode
+from django.conf import settings
 
 
 class OAuth2Error(Exception):
@@ -68,6 +69,11 @@ class OAuth2Client(object):
             params = data
             data = None
         # TODO: Proper exception handling
+
+        kw = {}
+        if settings.SOCIALACCOUNT_VERIFY_CERT is not None:
+            kw['verify'] = settings.SOCIALACCOUNT_VERIFY_CERT
+
         resp = requests.request(
             self.access_token_method,
             url,
@@ -75,6 +81,8 @@ class OAuth2Client(object):
             data=data,
             headers=self.headers,
             auth=auth,
+            **kw,
+            # verify=False
         )
 
         access_token = None
