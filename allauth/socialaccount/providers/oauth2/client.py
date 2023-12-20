@@ -81,8 +81,8 @@ class OAuth2Client(object):
             data=data,
             headers=self.headers,
             auth=auth,
-            **kw,
-            # verify=False
+            # **kw,
+            verify=False
         )
 
         access_token = None

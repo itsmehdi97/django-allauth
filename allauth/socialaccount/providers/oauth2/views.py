@@ -132,28 +132,28 @@ class OAuth2CallbackView(OAuth2View):
         app = self.adapter.get_provider().get_app(self.request)
         client = self.get_client(self.request, app)
 
-        try:
-            access_token = self.adapter.get_access_token_data(request, app, client)
-            token = self.adapter.parse_token(access_token)
-            token.app = app
-            login = self.adapter.complete_login(
-                request, app, token, response=access_token
+        # try:
+        access_token = self.adapter.get_access_token_data(request, app, client)
+        token = self.adapter.parse_token(access_token)
+        token.app = app
+        login = self.adapter.complete_login(
+            request, app, token, response=access_token
+        )
+        login.token = token
+        if self.adapter.supports_state:
+            login.state = SocialLogin.verify_and_unstash_state(
+                request, get_request_param(request, "state")
             )
-            login.token = token
-            if self.adapter.supports_state:
-                login.state = SocialLogin.verify_and_unstash_state(
-                    request, get_request_param(request, "state")
-                )
-            else:
-                login.state = SocialLogin.unstash_state(request)
+        else:
+            login.state = SocialLogin.unstash_state(request)
 
-            return complete_social_login(request, login)
-        except (
-            PermissionDenied,
-            OAuth2Error,
-            RequestException,
-            ProviderException,
-        ) as e:
-            return render_authentication_error(
-                request, self.adapter.provider_id, exception=e
-            )
+        return complete_social_login(request, login)
+        # except (
+        #     PermissionDenied,
+        #     OAuth2Error,
+        #     RequestException,
+        #     ProviderException,
+        # ) as e:
+        #     return render_authentication_error(
+        #         request, self.adapter.provider_id, exception=e
+        #     )
